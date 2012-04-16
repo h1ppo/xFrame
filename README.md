@@ -1,6 +1,8 @@
 PHP xFrame
 ==========
 
+[![Build Status](https://secure.travis-ci.org/h1ppo/xFrame.png)](http://travis-ci.org/h1ppo/xFrame)
+
 A lightweight MVC framework
 
 Features
