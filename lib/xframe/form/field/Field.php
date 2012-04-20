@@ -27,6 +27,11 @@ abstract class Field {
     protected $validators = array();
 
     /**
+     * @var array
+     */
+    protected $error = array();
+
+    /**
      *
      * @param string $name
      * @param boolean $required
@@ -65,11 +70,31 @@ abstract class Field {
     }
 
     /**
+     * Returns the validators for this field
+     * @return array
+     */
+    public function getValidators() {
+        return $this->validators;
+    }
+
+    /**
      * Returns true if this field is required
      * @return boolean
      */
     public function isRequired() {
         return $this->required;
+    }
+
+    public function addError($error) {
+        $this->error[] = $error;
+    }
+
+    /**
+     * Return true if this field contains errors
+     * @return boolean
+     */
+    public function hasErrors() {
+        return count($this->error) > 0;
     }
     
 }

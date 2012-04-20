@@ -24,9 +24,14 @@ abstract class Form {
     protected $method;
 
     /**
+     * @var array of \xframe\form\field\Field
+     */
+    protected $field = array();
+
+    /**
      * @var array
      */
-    protected $fields = array();
+    protected $error = array();
 
     /**
      *
@@ -47,8 +52,24 @@ abstract class Form {
      * @return \xframe\form\Form
      */
     protected function addField(Field $field) {
-        $this->fields[$field->getName()] = $field;
+        $this->field[$field->getName()] = $field;
         return $this;
+    }
+
+    /**
+     * Return a field
+     * @return \xframe\form\field\Field
+     */
+    public function getField($fieldName) {
+        return $this->field[$fieldName];
+    }
+
+    /**
+     * Return this forms fields
+     * @return array of \xframe\form\field\Field
+     */
+    public function getFields() {
+        return $this->field;
     }
 
     /**
@@ -57,8 +78,8 @@ abstract class Form {
      * @return string
      */
     public function getValue($fieldName) {
-        if (array_key_exists($fieldName,  $this->fields)) {
-            return $this->fields[$fieldName]->getValue();
+        if (array_key_exists($fieldName,  $this->field)) {
+            return $this->field[$fieldName]->getValue();
         }
     }
 
@@ -67,10 +88,22 @@ abstract class Form {
      * @param \xframe\request\Request $request
      */
     public function processRequest(\xframe\request\Request $request) {
-        foreach ($this->fields as $name => $field) {
+        foreach ($this->field as $name => $field) {
             $field->setValue($request->$name);
         }
     }
 
-}
+    public function addError($fieldName, $error) {
+        $this->error[$fieldName] = $error;
+        return $this;
+    }
 
+    /**
+     * Returns true if this form contains errors
+     * @return boolean
+     */
+    public function hasErrors() {
+        return count($this->error) > 0;
+    }
+
+}
