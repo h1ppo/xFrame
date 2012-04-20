@@ -119,4 +119,23 @@ class Request extends Container {
                    implode($this->parameters).
                    implode(array_keys($this->parameters)));
     }
+
+    /**
+     * Returns true if the request was a POST
+     *
+     * @return boolean
+     */
+    public function isPost() {
+        return ('POST' == $this->server['REQUEST_METHOD']);
+    }
+
+    /**
+     * Returns true if the request was a GET
+     *
+     * @return boolean
+     */
+    public function isGet() {
+        return ('GET' == $this->server['REQUEST_METHOD']);
+    }
+
 }
