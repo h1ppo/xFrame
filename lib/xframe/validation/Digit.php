@@ -5,7 +5,9 @@ namespace xframe\validation;
 /**
  * Validate an input as a numeric digit 
  */
-class Digit implements Validator {
+class Digit extends Validator {
+
+    const DIGIT_ERR = 1, MIN_ERR = 2, MAX_ERR = 3;
 
     /**
      * @var int
@@ -24,10 +26,13 @@ class Digit implements Validator {
     public function __construct($min = null, $max = null) {
         $this->min = $min;
         $this->max = $max;
+        $this->errorMessage[self::DIGIT_ERR] = "'%value%' is not a digit.";
+        $this->errorMessage[self::MIN_ERR] = "'%value%' is less than minimum, '%min%'.";
+        $this->errorMessage[self::MAX_ERR] = "'%value%' is greater than maximum, '%max%'.";
     }
 
     /**
-     * Checkes if a given value contains only digits and is within the min and
+     * Checks if a given value contains only digits and is within the min and
      * max constraints
      * 
      * @param mixed $value
@@ -35,13 +40,13 @@ class Digit implements Validator {
      */
     public function validate($value) {
         if (!ctype_digit("{$value}")) {
-            return false;
+            $this->error(self::DIGIT_ERR, array("%value%" => $value));
         }
         if ($this->min != null && $value < $this->min) {
-            return false;
+            $this->error(self::DIGIT_ERR, array("%value%" => $value, '%min%' => $this->min));
         }
         if ($this->max != null && $value > $this->max) {
-            return false;
+            $this->error(self::DIGIT_ERR, array("%value%" => $value, '%max%' => $this->max));
         }
         
         return true;

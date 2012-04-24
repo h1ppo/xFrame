@@ -11,7 +11,6 @@ use \Memcache;
 use \Doctrine\ORM\EntityManager;
 use \Doctrine\ORM\Configuration;
 use \PDO;
-use \xframe\request\Session;
 
 /**
  * The System class provides access to the core resources, this includes the

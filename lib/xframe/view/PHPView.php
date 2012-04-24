@@ -53,5 +53,27 @@ class PHPView extends TemplateView {
         return $result;
     }
 
+    /**
+     *
+     * @param string $templateFile Path to template file, relative to the view dir
+     * @param array $vars $name => $value of variabels to be accessible to the partial
+     * @return type
+     */
+    private function partial($templateFile, $vars = array()) {
+        foreach ($vars as $name => $value) {
+            ${$name} = $value;
+        }
+        // capture output
+        ob_start();
+        // run view
+        require $this->viewDirectory.DIRECTORY_SEPARATOR.$templateFile.$this->viewExtension;
+        // store result
+        $result = ob_get_contents();
+        // turn off the output buffer
+        ob_end_clean();
+
+        return $result;
+    }
+
 }
 

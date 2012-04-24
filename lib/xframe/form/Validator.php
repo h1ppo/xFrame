@@ -1,6 +1,7 @@
 <?php
 namespace xframe\form;
 use \xframe\form\Form;
+use \xframe\validation\Exception;
 
 /**
  * Handles the validation of xFrame\form\Form objects
@@ -31,13 +32,18 @@ class Validator {
      * @return boolean
      */
     public function validate() {
+
         foreach ($this->form->getFields() as $fieldName => $field) {
             foreach ($field->getValidators() as $validator) {
-                if (!$validator->validate($field->getValue())) {
-                    $field->addError(1);
+
+                try {
+                    $validator->validate($field->getValue());
+                } catch (Exception $ex) {
+                    $field->addError($ex->getMessage());
                     $this->form->addError($fieldName, 1);
                     $this->valid = false;
                 }
+                
             }
         }
         return $this->valid;

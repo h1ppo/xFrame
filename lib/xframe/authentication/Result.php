@@ -31,7 +31,7 @@ class Result {
      */
     public function __construct($code = self::NOT_INITILISED, $message = array()) {
         $this->code = $code;
-        $this->message = $messafge;
+        $this->message = $message;
     }
 
     /**

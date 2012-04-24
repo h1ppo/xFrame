@@ -76,13 +76,15 @@ class Parameter {
      * @return boolean
      */
     public function validate($value) {
-        //if there is no validator, or the value validates return true
-        if ($this->validator == null || $this->validator->validate($value)) {
-            return true;
+        try {
+            //if there is no validator, or the value validates return true
+            if ($this->validator == null || $this->validator->validate($value)) {
+                return true;
+            }
+        } catch (xframe\validation\Exception $ex) {
+            // otherwise there was an error validating
+            throw new InvalidParameterEx("Value {$value} is not valid for parameter {$this->name} using validator ".get_class($this->validator).".", 0, $ex);
         }
-        
-        // otherwise there was an error validating
-        throw new InvalidParameterEx("Value {$value} is not valid for parameter {$this->name} using validator ".get_class($this->validator).".");
     }
 
 }

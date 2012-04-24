@@ -17,6 +17,11 @@ abstract class Field {
     protected $value;
 
     /**
+     * @var string
+     */
+    protected $label;
+
+    /**
      * @var boolean
      */
     protected $required;
@@ -37,10 +42,11 @@ abstract class Field {
      * @param boolean $required
      * @param string $validators
      */
-    public function __construct($name, $required = false, $validators = array()) {
+    public function __construct($name, $required = false, $validators = array(), $label = "") {
         $this->name = $name;
         $this->required = $required;
         $this->validators = $validators;
+        $this->label = $label;
     }
 
     /**
@@ -70,6 +76,24 @@ abstract class Field {
     }
 
     /**
+     * Returns the current label of the field
+     * @return string
+     */
+    public function getLabel() {
+        return $this->label;
+    }
+
+    /**
+     * Sets the label of this field
+     * @param string $value
+     * @return \xframe\form\field\Field
+     */
+    public function setLabel($label) {
+        $this->label = $label;
+        return $this;
+    }
+
+    /**
      * Returns the validators for this field
      * @return array
      */
@@ -95,6 +119,10 @@ abstract class Field {
      */
     public function hasErrors() {
         return count($this->error) > 0;
+    }
+
+    public function getErrors() {
+        return $this->error;
     }
     
 }

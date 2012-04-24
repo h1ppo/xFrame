@@ -10,27 +10,32 @@ class PDOAuthenticator implements Authenticator {
     /**
      * @var PDO
      */
-    private $pdo;
+    protected $pdo;
 
     /**
      * @var string
      */
-    private $table;
+    protected $table;
 
     /**
      * @var string
      */
-    private $identityColumn;
+    protected $identityColumn;
 
     /**
      * @var string
      */
-    private $credentialColumn;
+    protected $credentialColumn;
+
+    /**
+     * @var \Closure
+     */
+    protected $credentialCheck;
 
     /**
      * @var Result
      */
-    private $result;
+    protected $result;
 
     /**
      *
@@ -39,11 +44,12 @@ class PDOAuthenticator implements Authenticator {
      * @param string $identityColumn
      * @param string $credentialColumn
      */
-    public function __construct($pdo, $table, $identityColumn, $credentialColumn) {
+    public function __construct($pdo, $table, $identityColumn, $credentialColumn, \Closure $credentialCheck = null) {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->identityColumn = $identityColumn;
         $this->credentialColumn = $credentialColumn;
+        $this->credentialCheck = $credentialCheck;
         $this->result = new Result();
     }
 
@@ -78,7 +84,7 @@ class PDOAuthenticator implements Authenticator {
      * @param string $identity
      * @return array
      */
-    private function fetchDbResult($identity) {
+    protected function fetchDbResult($identity) {
         $stmt = $this->pdo->prepare("SELECT
                                         `{$this->identityColumn}`,
                                         `{$this->credentialColumn}`
@@ -97,7 +103,7 @@ class PDOAuthenticator implements Authenticator {
      * @param array $result
      * @param array $credential
      */
-    private function processDbResult($result, $credential) {
+    protected function processDbResult($result, $credential) {
         $num_results = count($result);
         if ($num_results == 0) {
             $this->result->setCode(Result::IDENTITY_NOT_FOUND);
@@ -105,10 +111,19 @@ class PDOAuthenticator implements Authenticator {
         else if ($num_results > 1) {
             $this->result->setCode(Result::AMBIGUOUS_IDENTITY);
         }
+        else if ($this->credentialCheck != null) {
+            $credentialCheck = $this->credentialCheck;
+            if (!$credentialCheck($credential, $result[0]->{$this->credentialColumn})) {
+                $this->result->setCode(Result::INVALID_CREDENTIAL);
+            } else {
+                $this->result->setCode(Result::SUCCESS);
+            }
+        }
         else if ($result[0]->{$this->credentialColumn} != $credential) {
             $this->result->setCode(Result::INVALID_CREDENTIAL);
+        } else {
+            $this->result->setCode(Result::SUCCESS);
         }
-        $this->result->setCode(Result::SUCCESS);
     }
 
 }
