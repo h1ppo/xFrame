@@ -43,10 +43,10 @@ class Digit extends Validator {
             $this->error(self::DIGIT_ERR, array("%value%" => $value));
         }
         if ($this->min != null && $value < $this->min) {
-            $this->error(self::DIGIT_ERR, array("%value%" => $value, '%min%' => $this->min));
+            $this->error(self::MIN_ERR, array("%value%" => $value, '%min%' => $this->min));
         }
         if ($this->max != null && $value > $this->max) {
-            $this->error(self::DIGIT_ERR, array("%value%" => $value, '%max%' => $this->max));
+            $this->error(self::MAX_ERR, array("%value%" => $value, '%max%' => $this->max));
         }
         
         return true;
