@@ -1,10 +1,11 @@
 <?php
 namespace xframe\form;
 use \xframe\form\field\Field;
+use \xframe\form\field\Hidden;
+use \xframe\session\Session;
 
 /**
  * Handles the content for a form
- * @todo csrf protection
  * @todo enctype
  * @todo decorators
  */
@@ -12,6 +13,7 @@ abstract class Form {
 
     const METHOD_POST = "post";
     const METHOD_GET = "get";
+    const CSRF_NAME = "xframe_csrf_token";
 
     /**
      * @var string
@@ -45,6 +47,19 @@ abstract class Form {
     }
 
     abstract protected function init();
+
+    public function addCSRFToken() {
+        $field = new Hidden(self::CSRF_NAME, true, array(new \xframe\validation\CSRF()));
+        $session = new Session("form");
+        $token = $session->get(self::CSRF_NAME) == "" ? $this->generateCSRFToken() : $session->get(self::CSRF_NAME);
+        $session->set(self::CSRF_NAME, $token);
+        $field->setValue($token);
+        $this->addField($field);
+    }
+
+    protected function generateCSRFToken() {
+        return md5(mt_rand(1,1000000) . time() . $this->id);
+    }
 
     /**
      * Adds a form field to the form
