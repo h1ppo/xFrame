@@ -14,6 +14,11 @@ class PHPView extends TemplateView {
     private $debug;
 
     /**
+     * @var string
+     */
+    private $layout;
+
+    /**
      * Set up the view
      *
      * @param Registry $registry
@@ -32,7 +37,10 @@ class PHPView extends TemplateView {
             ".phtml",
             $template
         );
-
+        $layout = $registry->get("PHPVIEW_LAYOUT_PATH");
+        if ($layout) {
+            $this->layout = $root."view".DIRECTORY_SEPARATOR.$layout.".phtml";
+        }
         $this->debug = $debug;
     }
 
@@ -44,13 +52,21 @@ class PHPView extends TemplateView {
         // capture output
         ob_start();
         // run view
-        require $this->template;
+        if ($this->layout) {
+            require $this->layout;
+        } else {
+            $this->content();
+        }
         // store result
         $result = ob_get_contents();
         // turn off the output buffer
         ob_end_clean();
 
         return $result;
+    }
+
+    protected function content() {
+        require $this->template;
     }
 
     /**

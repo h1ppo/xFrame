@@ -49,7 +49,7 @@ abstract class Form {
     abstract protected function init();
 
     public function addCSRFToken() {
-        $field = new Hidden(self::CSRF_NAME, true, array(new \xframe\validation\CSRF()));
+        $field = new Hidden(self::CSRF_NAME, true, array(new \xframe\validation\CSRF()), null, new decorator\field\Hidden());
         $session = new Session("form");
         $token = $session->get(self::CSRF_NAME) == "" ? $this->generateCSRFToken() : $session->get(self::CSRF_NAME);
         $session->set(self::CSRF_NAME, $token);

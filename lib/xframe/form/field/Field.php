@@ -32,6 +32,12 @@ abstract class Field {
     protected $validators = array();
 
     /**
+     * \xframe\form\decorator\field\Field
+     * @var type
+     */
+    protected $decorator;
+
+    /**
      * @var array
      */
     protected $error = array();
@@ -40,13 +46,16 @@ abstract class Field {
      *
      * @param string $name
      * @param boolean $required
-     * @param string $validators
+     * @param array $validators
+     * @param string $label
+     * @param \xframe\form\decorator\field\Field $decorator
      */
-    public function __construct($name, $required = false, $validators = array(), $label = "") {
+    public function __construct($name, $required = false, $validators = array(), $label = "", \xframe\form\decorator\field\Field $decorator = null) {
         $this->name = $name;
         $this->required = $required;
         $this->validators = $validators;
         $this->label = $label;
+        $this->decorator = $decorator;
     }
 
     /**
@@ -123,6 +132,13 @@ abstract class Field {
 
     public function getErrors() {
         return $this->error;
+    }
+
+    public function __toString() {
+        if ($this->decorator) {
+            return $this->decorator->getHtml($this);
+        }
+        return $this->value;
     }
     
 }
