@@ -27,7 +27,7 @@ class Controller {
      * @var \xframe\view\View
      */
     protected $view;
-    
+
     /**
      * @var array of Prefilter
      */
@@ -42,7 +42,7 @@ class Controller {
      * @var boolean
      */
     private $cacheEnabled;
-    
+
     /**
      * @var string
      */
@@ -50,7 +50,7 @@ class Controller {
 
     /**
      * Constructor
-     * 
+     *
      * @param DependencyInjectionContainer $dic
      * @param Request $request
      * @param string $method
@@ -105,7 +105,7 @@ class Controller {
     /**
      * Run the prefilter (if set), run the controller and output the response
      */
-    public function handleRequest() {
+    public function handleRequest(Request $request) {
         //if we continue running after the prefilter has run
         if ($this->runPrefilters()) {
             //process the response
@@ -186,7 +186,7 @@ class Controller {
      * This method is class before the controller method is called
      */
     protected function init() {
-        
+
     }
 
 }

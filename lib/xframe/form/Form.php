@@ -99,12 +99,26 @@ abstract class Form {
     }
 
     /**
-     * Sets the values from the current request into the fields for this form
-     * @param \xframe\request\Request $request
+     * Returns a associative array of field values
+     * @return array
      */
-    public function processRequest(\xframe\request\Request $request) {
+    public function getValues() {
+        $values = array();
+        foreach ($this->field as $fieldName => $field) {
+            $values[$fieldName] = $field->getValue();
+        }
+        return $values;
+    }
+
+    /**
+     * Sets the values from an object into the fields for this form
+     * @param array $object
+     */
+    public function assignValues(array $values) {
         foreach ($this->field as $name => $field) {
-            $field->setValue($request->$name);
+            if (array_key_exists($name, $values)) {
+                $field->setValue($values[$name]);
+            }
         }
     }
 

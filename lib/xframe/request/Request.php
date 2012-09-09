@@ -89,6 +89,13 @@ class Request extends Container {
     }
     
     /**
+     * @return array
+     */
+    public function getUnMappedParameters() {
+        return $this->attributes;
+    }
+    
+    /**
      * @param array $parameters 
      */
     public function setMappedParameters(array &$parameters) {

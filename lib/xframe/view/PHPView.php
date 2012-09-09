@@ -17,6 +17,11 @@ class PHPView extends TemplateView {
      * @var string
      */
     private $layout;
+    
+    /**
+     * @var string
+     */
+    private $root;
 
     /**
      * Set up the view
@@ -37,11 +42,25 @@ class PHPView extends TemplateView {
             ".phtml",
             $template
         );
+        $this->root = $root;
         $layout = $registry->get("PHPVIEW_LAYOUT_PATH");
         if ($layout) {
-            $this->layout = $root."view".DIRECTORY_SEPARATOR.$layout.".phtml";
+            $this->setLayoutPath($layout);
         }
         $this->debug = $debug;
+    }
+
+    /**
+     * Sets the layout for this view
+     * @param string $layoutPath
+     */
+    public function setLayoutPath($layoutPath) {
+		$path = $this->root."view".DIRECTORY_SEPARATOR.$layoutPath.".phtml";
+		if (file_exists($path)) {
+			$this->layout = $path;
+		} else {
+			$this->layout = false;
+		}
     }
 
     /**

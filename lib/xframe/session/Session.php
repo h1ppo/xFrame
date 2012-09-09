@@ -10,13 +10,20 @@ class Session {
 
     /**
      *
-     * @param string $namepsace
+     * @param string $namespace
      */
-    public function __construct($namepsace) {
+    public function __construct($namespace) {
         if (session_id() == '') {
             session_start();
         }
-        $this->namespace = &$_SESSION[$namepsace];
+        $this->namespace = &$_SESSION[$namespace];
+    }
+
+    /**
+     * Discards this namespace in the session
+     */
+    public function discard() {
+        $this->namespace = null;
     }
 
     /**
@@ -25,7 +32,10 @@ class Session {
      * @return mixed
      */
     public function get($key) {
-        return $this->namespace[$key];
+		if (is_array($this->namespace) && array_key_exists($key, $this->namespace)) {
+			return $this->namespace[$key];
+		}
+		return null;
     }
 
     /**

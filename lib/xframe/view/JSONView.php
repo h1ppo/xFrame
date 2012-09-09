@@ -13,6 +13,7 @@ class JSONView extends View {
      * @return string
      */
     public function execute() {
+		header("Content-type: application/json");
         return json_encode($this->parameters);
     }
 
