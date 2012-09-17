@@ -179,11 +179,24 @@ class RequestMapGenerator {
         $filename = $this->dic->tmp.$request.".php";
 
         try {
-            file_put_contents($filename, $fileContents);
+            $this->writeCacheRequestFile($filename, $fileContents);
         }
         catch (Exception $e) {
             throw new Exception("Could not create request cache file: ".$filename, 0, $e);
         }
+    }
+
+    /**
+     * Writes the cached request file to disk and creates any necessary sub directories
+     * @param string $filename
+     * @param string $fileContents
+     */
+    private function writeCacheRequestFile($filename, $fileContents) {
+        $dir = dirname($filename);
+        if ($dir != "." && !file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        file_put_contents($filename, $fileContents);
     }
     
     /**

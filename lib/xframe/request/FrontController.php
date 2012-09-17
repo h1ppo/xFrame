@@ -40,30 +40,43 @@ class FrontController {
      * @param Request $request 
      */
     public function dispatch(Request $request) {
-        $filename = $this->dic->tmp.$request->getRequestedResource().'.php';
-        
-        //if we have a mapping for the request
-        if (file_exists($filename)) {
-            //return the response from the controller
-            $controller = require($filename);
-        }
+
+        $controller = $this->loadResource($request);
+
         //if we rebuild on 404, disable this for performance
-        else if ($this->dic->registry->get('AUTO_REBUILD_REQUEST_MAP')) {
+        if ($controller === false && $this->dic->registry->get('AUTO_REBUILD_REQUEST_MAP')) {
             $this->rebuildRequestMap();
-            $filename = $this->dic->tmp.$request->getRequestedResource().'.php';
-            
-            //try again, in case it has just been added
-            if (file_exists($filename)) {
-                $controller = require($filename);
-            }
+            $controller = $this->loadResource($request);
         }
 
         // if we still don't have a controller 404 it
-        if (!isset($controller)) {
+        if ($controller === false) {
             $controller = $this->get404Controller();
         }
 
         $controller->handleRequest($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    private function loadResource(Request $request) {
+        $requestParts = $request->getRequestParts();
+        $filename = "";
+        $params = array();
+        $controller = false;
+        foreach ($requestParts as $key => $part) {
+            $filename .= $part;
+            if (file_exists($this->dic->tmp . $filename . ".php")) {
+                $request->setRequestedResource($filename, array_slice($requestParts, $key));
+                $controller = require $this->dic->tmp . $filename . ".php";
+                break;
+            }
+            $filename .= DIRECTORY_SEPARATOR;
+        }
+
+        return $controller;
     }
     
     /**

@@ -12,6 +12,7 @@ use \xframe\util\Container;
  * through the front controller and handled by a request controller
  */
 class Request extends Container {
+    private $requestParts;
     private $requestedResource;
     private $mappedParameters;
     
@@ -35,11 +36,7 @@ class Request extends Container {
         //check for blank request
         $request = $request == '' ? 'index' : $request;
         //support for urls with request/param/param
-        $request = explode('/', $request);
-        //get the request name
-        $this->requestedResource = $request[0];
-        //get the parameters out of the request URI
-        $this->mappedParameters = array_slice($request, 1);
+        $this->requestParts = explode('/', $request);
         //store the other params (usually from $_REQUEST)
         parent::__construct($parameters);
 
@@ -49,6 +46,15 @@ class Request extends Container {
         $this->server = &$_SERVER;
         $this->https = isset($this->server['HTTPS']) || isset($this->server['HTTP_X_SECURE']);
         $this->cli = php_sapi_name() == 'cli';
+    }
+
+    /**
+     * @param string $resource
+     * @param array $mappedParameters
+     */
+    public function setRequestedResource($resource, array $mappedParameters = array()) {
+        $this->requestedResource = $resource;
+        $this->mappedParameters = $mappedParameters;
     }
 
     /**
@@ -79,6 +85,13 @@ class Request extends Container {
             // add the parameter
             $this->attributes[$parameter->getName()] = $this->mappedParameters[$i];
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequestParts() {
+        return $this->requestParts;
     }
     
     /**

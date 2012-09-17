@@ -1,7 +1,6 @@
 <?php
 
 namespace xframe\view;
-use \xframe\registry\Registry;
 
 /**
  * JSONView is the view for outputting json
