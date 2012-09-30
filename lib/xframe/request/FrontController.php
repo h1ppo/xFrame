@@ -64,12 +64,12 @@ class FrontController {
     private function loadResource(Request $request) {
         $requestParts = $request->getRequestParts();
         $filename = "";
-        $params = array();
         $controller = false;
         foreach ($requestParts as $key => $part) {
             $filename .= $part;
             if (file_exists($this->dic->tmp . $filename . ".php")) {
-                $request->setRequestedResource($filename, array_slice($requestParts, $key));
+                $requestParts = count($requestParts) > 1 ? array_slice($requestParts, $key + 1) : array();
+                $request->setRequestedResource($filename, $requestParts);
                 $controller = require $this->dic->tmp . $filename . ".php";
                 break;
             }
