@@ -65,15 +65,15 @@ class FrontController {
         $requestParts = $request->getRequestParts();
         $filename = "";
         $controller = false;
-        foreach ($requestParts as $key => $part) {
-            $filename .= $part;
+        $parts = array();
+        while ($lastItem = array_pop($requestParts)) {
+            $filename = implode("/", $requestParts) . "/" . $lastItem;
             if (file_exists($this->dic->tmp . $filename . ".php")) {
-                $requestParts = count($requestParts) > 1 ? array_slice($requestParts, $key + 1) : array();
-                $request->setRequestedResource($filename, $requestParts);
+                $request->setRequestedResource($filename, array_reverse($parts));
                 $controller = require $this->dic->tmp . $filename . ".php";
                 break;
             }
-            $filename .= DIRECTORY_SEPARATOR;
+            $parts[] = $lastItem;
         }
 
         return $controller;

@@ -157,5 +157,20 @@ class Request extends Container {
     public function isGet() {
         return ('GET' == $this->server['REQUEST_METHOD']);
     }
+    
+    /**
+     * Attempts to return the client's ip address
+     * @return string
+     */
+    public function getClientIp() {
+        if (!empty($this->server['HTTP_CLIENT_IP'])) {
+            return $this->server['HTTP_CLIENT_IP'];
+        }
+        if (!empty($this->server['HTTP_X_FORWARDED_FOR'])) {
+            return $this->server['HTTP_X_FORWARDED_FOR'];
+        }
+        
+        return $this->server['REMOTE_ADDR'];
+    }
 
 }
